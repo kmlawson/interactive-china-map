@@ -97,8 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function positionLabel(e, labelElement) {
         const mapContainer = document.getElementById('map-container');
         const rect = mapContainer.getBoundingClientRect();
-        const offsetX = e.clientX + rect.left - 30;
-        const offsetY = e.clientY - rect.top;
+        const offsetX = e.clientX + rect.left - 40;
+        const offsetY = e.clientY - rect.top - 5;
         
         labelElement.style.left = `${offsetX}px`;
         labelElement.style.top = `${offsetY}px`;
