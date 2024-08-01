@@ -23,6 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
         XZd2: 'Tibet (Disputed)', XZd1: 'Tibet (Disputed)'
     };
 
+    const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    let labelTimeout;
+
     fetch('china-provinces-map.svg')
         .then(response => response.text())
         .then(svgContent => {
@@ -35,7 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const provinces = provinceGroup.querySelectorAll('path, g');
         const cityGroup = document.querySelector('g.city');
         const cities = cityGroup.querySelectorAll('circle');
-        const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
         provinces.forEach(province => {
             let id = province.id.substring(1); // Remove the 'p' prefix
@@ -45,9 +47,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 province = province.querySelector('path'); // For grouped provinces, use the first path
             }
 
-            province.addEventListener('click', (e) => toggleLabel(e, name, provinceNameDisplay));
-            
-            if (!isMobile) {
+            if (isMobile) {
+                province.addEventListener('click', (e) => toggleLabelMobile(e, name, provinceNameDisplay));
+            } else {
+                province.addEventListener('click', (e) => toggleLabel(e, name, provinceNameDisplay));
                 province.addEventListener('mousemove', (e) => showLabel(e, name, provinceNameDisplay));
                 province.addEventListener('mouseout', () => hideLabel(provinceNameDisplay));
             }
@@ -56,24 +59,25 @@ document.addEventListener('DOMContentLoaded', () => {
         cities.forEach(city => {
             const name = city.id;
             
-            city.addEventListener('click', (e) => toggleLabel(e, name, cityNameDisplay));
-            
-            if (!isMobile) {
+            if (isMobile) {
+                city.addEventListener('click', (e) => toggleLabelMobile(e, name, cityNameDisplay));
+            } else {
+                city.addEventListener('click', (e) => toggleLabel(e, name, cityNameDisplay));
                 city.addEventListener('mousemove', (e) => showLabel(e, name, cityNameDisplay));
                 city.addEventListener('mouseout', () => hideLabel(cityNameDisplay));
             }
         });
 
         enablePanZoom();
-
-        // Add event listener for the checkbox
         showCitiesCheckbox.addEventListener('change', toggleCityVisibility);
-
-        // Initial city visibility
         toggleCityVisibility();
-
-        // Set initial scroll position to top right
         setInitialScrollPosition();
+
+        // Hide labels on mobile initially
+        if (isMobile) {
+            hideLabel(provinceNameDisplay);
+            hideLabel(cityNameDisplay);
+        }
     }
 
     function showLabel(e, name, labelElement) {
@@ -92,6 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             hideLabel(labelElement);
         }
+    }
+
+    function toggleLabelMobile(e, name, labelElement) {
+        clearTimeout(labelTimeout);
+        showLabel(e, name, labelElement);
+        labelTimeout = setTimeout(() => hideLabel(labelElement), 2000);
     }
 
     function positionLabel(e, labelElement) {

@@ -7,6 +7,7 @@ body {
     align-items: center;
     height: 100vh;
     background-color: #f0f0f0;
+    font-family: Arial, sans-serif;
 }
 
 #controls {
@@ -38,7 +39,6 @@ body {
 }
 
 .province-label {
-    font-family: Arial, sans-serif;
     font-size: 12px;
     pointer-events: none;
 }
@@ -47,15 +47,13 @@ body {
     position: fixed;
     padding: 5px;
     border: 1px solid black;
-    display: none;
-    font-family: Arial, sans-serif;
     font-size: 14px;
     pointer-events: none;
+    display: none; /* Hide by default */
+    z-index: 1000;
 }
 
 #province-name {
-    top: 40px;
-    left: 10px;
     background: white;
 }
 
@@ -81,12 +79,11 @@ body {
     }
 
     .province:hover {
-        fill: #99CC99;
+        fill: #99CC99; /* Reset hover color on mobile */
     }
 
     #province-name, #city-name {
-        display: block !important;
-        position: absolute;
-        z-index: 1000;
+        display: none; /* Ensure they're hidden on mobile by default */
+        position: fixed; /* Use fixed positioning on mobile */
     }
 }
