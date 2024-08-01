@@ -22,7 +22,7 @@ body {
 }
 
 .province:hover {
-    fill:#99CC99;
+    fill: #99CC99;
 }
 
 .province-label {
@@ -31,14 +31,35 @@ body {
     pointer-events: none;
 }
 
-#province-name {
+#province-name, #city-name {
     position: fixed;
-    top: 10px;
-    left: 10px;
     padding: 5px;
-    background: white;
     border: 1px solid black;
     display: none;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+#province-name {
+    top: 10px;
+    left: 10px;
+    background: white;
+}
+
+#city-name {
+    background: #FFFF99;
+}
+
+.city circle {
+    fill: #c7f2c7);
+    stroke: #ffffff;
+    stroke-width: 1px;
+    transition: fill 0.3s;
+}
+
+.city circle:hover {
+    fill: #c9edc1;
 }
 
 @media (max-width: 768px) {
@@ -46,12 +67,7 @@ body {
         overflow: scroll;
         -webkit-overflow-scrolling: touch;
     }
-
-    .province:hover {
-        fill:  #99CC99;
-    }
-
-    #province-name {
+    #province-name, #city-name {
         display: none !important;
     }
 }

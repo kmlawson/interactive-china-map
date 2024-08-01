@@ -4,7 +4,8 @@
   <defs>
     <style type="text/css">
 	
-	.province {fill:#d3d3d3}
+	.province {fill:#99CC99}
+  .city {fill:#32432e}
 	#pXJd, #pXZd {fill:#e8e8e8}
 	
   </style>

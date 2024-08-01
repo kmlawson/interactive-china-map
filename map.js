@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     const mapContainer = document.getElementById('map-container');
     const provinceNameDisplay = document.getElementById('province-name');
+    const cityNameDisplay = document.createElement('div');
+    cityNameDisplay.id = 'city-name';
+    document.body.appendChild(cityNameDisplay);
     
     const provinceNames = {
         HJ: "Heilongjiang", JL: "Jilin", LN: "Liaoning", NM: "Inner Mongolia",
@@ -13,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {
         HE_1: 'Hebei', HE_2: 'Hebei',
         SH_1: 'Shanghai', 'SH_2': 'Shanghai', 'SH_3': 'Shanghai',
         FJ_1: 'Fujian', 'FJ_2': 'Fujian', 'FJ_3': 'Fujian',
-        GD_1: 'Guangdong', GD_2: 'Guangdong', GD_3: 'Guangdong', GD_4: 'Guangdong', GD_6: 'Guangdong', GD_5: 'Guangdong', // and so on for all GD_ prefixes
+        GD_1: 'Guangdong', GD_2: 'Guangdong', GD_3: 'Guangdong', GD_4: 'Guangdong', GD_6: 'Guangdong', GD_5: 'Guangdong',
         MO_1: 'Macao', MO_2: 'Macao',
         HK_1: 'Hong Kong', HK_2: 'Hong Kong',
         TW_1: 'Taiwan', TW_2: "Taiwan", TW_3: "Taiwan",
@@ -31,6 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
     function initializeMap() {
         const provinceGroup = document.querySelector('g.province');
         const provinces = provinceGroup.querySelectorAll('path, g');
+        const cityGroup = document.querySelector('g.city');
+        const cities = cityGroup.querySelectorAll('circle');
         const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
         provinces.forEach(province => {
@@ -42,10 +47,21 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             if (!isMobile) {
-                province.addEventListener('mousemove', (e) => showProvinceName(e, name));
-                province.addEventListener('mouseout', hideProvinceName);
+                province.addEventListener('mousemove', (e) => showLabel(e, name, provinceNameDisplay));
+                province.addEventListener('mouseout', () => hideLabel(provinceNameDisplay));
             } else {
-                province.addEventListener('click', (e) => toggleProvinceName(e, name));
+                province.addEventListener('click', (e) => toggleLabel(e, name, provinceNameDisplay));
+            }
+        });
+
+        cities.forEach(city => {
+            const name = city.id;
+            
+            if (!isMobile) {
+                city.addEventListener('mousemove', (e) => showLabel(e, name, cityNameDisplay));
+                city.addEventListener('mouseout', () => hideLabel(cityNameDisplay));
+            } else {
+                city.addEventListener('click', (e) => toggleLabel(e, name, cityNameDisplay));
             }
         });
 
@@ -54,30 +70,29 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function showProvinceName(e, name) {
-        provinceNameDisplay.textContent = name;
-        provinceNameDisplay.style.display = 'block';
-        positionProvinceNameDisplay(e);
+    function showLabel(e, name, labelElement) {
+        labelElement.textContent = name;
+        labelElement.style.display = 'block';
+        positionLabel(e, labelElement);
     }
 
-    function hideProvinceName() {
-        provinceNameDisplay.style.display = 'none';
+    function hideLabel(labelElement) {
+        labelElement.style.display = 'none';
     }
 
-    function toggleProvinceName(e, name) {
-        if (provinceNameDisplay.style.display === 'none') {
-            showProvinceName(e, name);
+    function toggleLabel(e, name, labelElement) {
+        if (labelElement.style.display === 'none') {
+            showLabel(e, name, labelElement);
         } else {
-            hideProvinceName();
+            hideLabel(labelElement);
         }
     }
 
-    function positionProvinceNameDisplay(e) {
+    function positionLabel(e, labelElement) {
         const offset = 15;
-        provinceNameDisplay.style.left = `${e.clientX + offset}px`;
-        provinceNameDisplay.style.top = `${e.clientY - offset}px`;
+        labelElement.style.left = `${e.clientX + offset}px`;
+        labelElement.style.top = `${e.clientY - offset}px`;
     }
-    
 
     function enablePanZoom() {
         const svg = document.querySelector('svg');
