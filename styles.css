@@ -61,6 +61,10 @@ body {
     background: #FFFF99;
 }
 
+#Yellow\ River, #Yangzi\ River {
+    display: none; /* Hidden by default */
+}
+
 .city circle {
     fill: #3a6647;
     stroke: #ffffff;

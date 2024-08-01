@@ -3,6 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const provinceNameDisplay = document.getElementById('province-name');
     const cityNameDisplay = document.getElementById('city-name');
     const showCitiesCheckbox = document.getElementById('show-cities');
+    const showYellowRiverCheckbox = document.getElementById('show-yellow-river');
+    const showYangziRiverCheckbox = document.getElementById('show-yangzi-river');
     
     const provinceNames = {
         HJ: "Heilongjiang", JL: "Jilin", LN: "Liaoning", NM: "Inner Mongolia",
@@ -33,52 +35,50 @@ document.addEventListener('DOMContentLoaded', () => {
             initializeMap();
         });
 
-    function initializeMap() {
-        const provinceGroup = document.querySelector('g.province');
-        const provinces = provinceGroup.querySelectorAll('path, g');
-        const cityGroup = document.querySelector('g.city');
-        const cities = cityGroup.querySelectorAll('circle');
-
-        provinces.forEach(province => {
-            let id = province.id.substring(1); // Remove the 'p' prefix
-            const name = provinceNames[id] || id; // Use the full name if available, otherwise use the abbreviation
-            
-            if (province.tagName === 'g') {
-                province = province.querySelector('path'); // For grouped provinces, use the first path
-            }
-
+        function initializeMap() {
+            const provinceGroup = document.querySelector('g.province');
+            const provinces = provinceGroup.querySelectorAll('path, g');
+            const cityGroup = document.querySelector('g.city');
+            const cities = cityGroup.querySelectorAll('circle');
+    
+            provinces.forEach(province => {
+                let id = province.id.substring(1);
+                const name = provinceNames[id] || id;
+                
+                if (province.tagName === 'g') {
+                    province = province.querySelector('path');
+                }
+    
+                if (isMobile) {
+                    province.addEventListener('click', (e) => toggleLabelMobile(e, name, provinceNameDisplay));
+                } else {
+                    province.addEventListener('mousemove', (e) => showLabel(e, name, provinceNameDisplay));
+                    province.addEventListener('mouseout', () => hideLabel(provinceNameDisplay));
+                }
+            });
+    
+            cities.forEach(city => {
+                const name = city.id;
+                
+                if (isMobile) {
+                    city.addEventListener('click', (e) => toggleLabelMobile(e, name, cityNameDisplay));
+                } else {
+                    city.addEventListener('mousemove', (e) => showLabel(e, name, cityNameDisplay));
+                    city.addEventListener('mouseout', () => hideLabel(cityNameDisplay));
+                }
+            });
+    
+            enablePanZoom();
+            showCitiesCheckbox.addEventListener('change', toggleVisibility);
+            showYellowRiverCheckbox.addEventListener('change', toggleVisibility);
+            showYangziRiverCheckbox.addEventListener('change', toggleVisibility);
+            toggleVisibility();
+    
             if (isMobile) {
-                province.addEventListener('click', (e) => toggleLabelMobile(e, name, provinceNameDisplay));
-            } else {
-                province.addEventListener('click', (e) => toggleLabel(e, name, provinceNameDisplay));
-                province.addEventListener('mousemove', (e) => showLabel(e, name, provinceNameDisplay));
-                province.addEventListener('mouseout', () => hideLabel(provinceNameDisplay));
+                hideLabel(provinceNameDisplay);
+                hideLabel(cityNameDisplay);
             }
-        });
-
-        cities.forEach(city => {
-            const name = city.id;
-            
-            if (isMobile) {
-                city.addEventListener('click', (e) => toggleLabelMobile(e, name, cityNameDisplay));
-            } else {
-                city.addEventListener('click', (e) => toggleLabel(e, name, cityNameDisplay));
-                city.addEventListener('mousemove', (e) => showLabel(e, name, cityNameDisplay));
-                city.addEventListener('mouseout', () => hideLabel(cityNameDisplay));
-            }
-        });
-
-        enablePanZoom();
-        showCitiesCheckbox.addEventListener('change', toggleCityVisibility);
-        toggleCityVisibility();
-        setInitialScrollPosition();
-
-        // Hide labels on mobile initially
-        if (isMobile) {
-            hideLabel(provinceNameDisplay);
-            hideLabel(cityNameDisplay);
         }
-    }
 
     function showLabel(e, name, labelElement) {
         labelElement.textContent = name;
@@ -114,47 +114,76 @@ document.addEventListener('DOMContentLoaded', () => {
         labelElement.style.top = `${offsetY}px`;
     }
 
-    function toggleCityVisibility() {
+    function toggleVisibility() {
         const cityGroup = document.querySelector('g.city');
-        if (showCitiesCheckbox.checked) {
-            cityGroup.style.display = 'block';
-        } else {
-            cityGroup.style.display = 'none';
+        const yellowRiver = document.querySelector('#Yellow\\ River');
+        const yangziRiver = document.querySelector('#Yangzi\\ River');
+
+        cityGroup.style.display = showCitiesCheckbox.checked ? 'block' : 'none';
+        yellowRiver.style.display = showYellowRiverCheckbox.checked ? 'block' : 'none';
+        yangziRiver.style.display = showYangziRiverCheckbox.checked ? 'block' : 'none';
+
+        if (!showCitiesCheckbox.checked) {
             hideLabel(cityNameDisplay);
         }
     }
 
     function enablePanZoom() {
         const svg = document.querySelector('svg');
+        if (!svg) {
+            console.error('SVG element not found');
+            return;
+        }
+
         let isPanning = false;
         let startPoint = { x: 0, y: 0 };
         let endPoint = { x: 0, y: 0 };
         let scale = 1;
 
-        svg.addEventListener('touchstart', startPan);
-        svg.addEventListener('touchmove', pan);
-        svg.addEventListener('touchend', endPan);
+        if (isMobile) {
+            // Set initial viewBox for mobile
+            const setInitialViewBox = () => {
+                const { width, height } = svg.getBoundingClientRect();
+                svg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+            };
 
-        svg.addEventListener('wheel', zoom);
+            if (svg.getBoundingClientRect().width > 0) {
+                setInitialViewBox();
+            } else {
+                svg.addEventListener('load', setInitialViewBox);
+            }
+
+            // Enable zooming for mobile
+            mapContainer.addEventListener('touchstart', handleTouchStart, { passive: false });
+            mapContainer.addEventListener('touchmove', handleTouchMove, { passive: false });
+            mapContainer.addEventListener('touchend', handleTouchEnd);
+        }
+
+        // Enable panning for both desktop and mobile
+        if (isMobile) {
+            svg.addEventListener('touchstart', startPan);
+            svg.addEventListener('touchmove', pan);
+            svg.addEventListener('touchend', endPan);
+        } else {
+            svg.addEventListener('mousedown', startPan);
+            svg.addEventListener('mousemove', pan);
+            svg.addEventListener('mouseup', endPan);
+            svg.addEventListener('mouseleave', endPan);
+        }
 
         function startPan(e) {
-            if (isMobile) {
-                hideLabel(provinceNameDisplay);
-                hideLabel(cityNameDisplay);
-            }
             isPanning = true;
-            startPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+            startPoint = getPointFromEvent(e);
         }
 
         function pan(e) {
             if (!isPanning) return;
-            endPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
-            const dx = (endPoint.x - startPoint.x) / scale;
-            const dy = (endPoint.y - startPoint.y) / scale;
+            endPoint = getPointFromEvent(e);
+            const dx = endPoint.x - startPoint.x;
+            const dy = endPoint.y - startPoint.y;
 
-            const viewBox = svg.viewBox.baseVal;
-            viewBox.x -= dx;
-            viewBox.y -= dy;
+            mapContainer.scrollLeft -= dx;
+            mapContainer.scrollTop -= dy;
 
             startPoint = endPoint;
         }
@@ -163,29 +192,47 @@ document.addEventListener('DOMContentLoaded', () => {
             isPanning = false;
         }
 
-        function zoom(e) {
-            e.preventDefault();
-            const oldScale = scale;
-            scale += e.deltaY * -0.01;
-            scale = Math.min(Math.max(0.5, scale), 4);
-        
-            const viewBox = svg.viewBox.baseVal;
-            const mouseX = e.clientX - svg.getBoundingClientRect().left;
-            const mouseY = e.clientY - svg.getBoundingClientRect().top;
-        
-            viewBox.x += mouseX * (1 / oldScale - 1 / scale);
-            viewBox.y += mouseY * (1 / oldScale - 1 / scale);
-        
-            svg.style.transform = `scale(${scale})`;
-        
-            // Hide labels on mobile
-            if (isMobile) {
-                hideLabel(provinceNameDisplay);
-                hideLabel(cityNameDisplay);
+        function getPointFromEvent(e) {
+            return {
+                x: e.clientX || (e.touches && e.touches[0].clientX),
+                y: e.clientY || (e.touches && e.touches[0].clientY)
+            };
+        }
+
+        // Mobile-specific touch handling for zooming
+        let initialDistance = 0;
+
+        function handleTouchStart(e) {
+            if (e.touches.length === 2) {
+                initialDistance = getDistance(e.touches[0], e.touches[1]);
             }
         }
-    }
 
+        function handleTouchMove(e) {
+            if (e.touches.length === 2) {
+                e.preventDefault(); // Prevent default pinch-zoom behavior
+                const currentDistance = getDistance(e.touches[0], e.touches[1]);
+                const delta = currentDistance - initialDistance;
+                const newScale = scale * (1 + delta * 0.01);
+                
+                scale = Math.min(Math.max(0.5, newScale), 4);
+                svg.style.transform = `scale(${scale})`;
+                
+                initialDistance = currentDistance;
+            }
+        }
+
+        function handleTouchEnd() {
+            initialDistance = 0;
+        }
+
+        function getDistance(touch1, touch2) {
+            const dx = touch1.clientX - touch2.clientX;
+            const dy = touch1.clientY - touch2.clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+    }
+    
     function setInitialScrollPosition() {
         const mapContainer = document.getElementById('map-container');
         const svg = mapContainer.querySelector('svg');
