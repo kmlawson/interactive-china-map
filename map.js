@@ -1,9 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     const mapContainer = document.getElementById('map-container');
     const provinceNameDisplay = document.getElementById('province-name');
-    const cityNameDisplay = document.createElement('div');
-    cityNameDisplay.id = 'city-name';
-    document.body.appendChild(cityNameDisplay);
+    const cityNameDisplay = document.getElementById('city-name');
+    const showCitiesCheckbox = document.getElementById('show-cities');
     
     const provinceNames = {
         HJ: "Heilongjiang", JL: "Jilin", LN: "Liaoning", NM: "Inner Mongolia",
@@ -68,6 +67,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (isMobile) {
             enablePanZoom();
         }
+
+        // Add event listener for the checkbox
+        showCitiesCheckbox.addEventListener('change', toggleCityVisibility);
+
+        // Initial city visibility
+        toggleCityVisibility();
     }
 
     function showLabel(e, name, labelElement) {
@@ -92,6 +97,16 @@ document.addEventListener('DOMContentLoaded', () => {
         const offset = 15;
         labelElement.style.left = `${e.clientX + offset}px`;
         labelElement.style.top = `${e.clientY - offset}px`;
+    }
+
+    function toggleCityVisibility() {
+        const cityGroup = document.querySelector('g.city');
+        if (showCitiesCheckbox.checked) {
+            cityGroup.style.display = 'block';
+        } else {
+            cityGroup.style.display = 'none';
+            hideLabel(cityNameDisplay);
+        }
     }
 
     function enablePanZoom() {
