@@ -138,6 +138,10 @@ document.addEventListener('DOMContentLoaded', () => {
         svg.addEventListener('wheel', zoom);
 
         function startPan(e) {
+            if (isMobile) {
+                hideLabel(provinceNameDisplay);
+                hideLabel(cityNameDisplay);
+            }
             isPanning = true;
             startPoint = { x: e.touches[0].clientX, y: e.touches[0].clientY };
         }
@@ -161,9 +165,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
         function zoom(e) {
             e.preventDefault();
+            const oldScale = scale;
             scale += e.deltaY * -0.01;
             scale = Math.min(Math.max(0.5, scale), 4);
+        
+            const viewBox = svg.viewBox.baseVal;
+            const mouseX = e.clientX - svg.getBoundingClientRect().left;
+            const mouseY = e.clientY - svg.getBoundingClientRect().top;
+        
+            viewBox.x += mouseX * (1 / oldScale - 1 / scale);
+            viewBox.y += mouseY * (1 / oldScale - 1 / scale);
+        
             svg.style.transform = `scale(${scale})`;
+        
+            // Hide labels on mobile
+            if (isMobile) {
+                hideLabel(provinceNameDisplay);
+                hideLabel(cityNameDisplay);
+            }
         }
     }
 
