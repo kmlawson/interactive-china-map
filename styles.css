@@ -85,6 +85,8 @@ body {
     }
 
     #province-name, #city-name {
-        display: none !important;
+        display: block !important;
+        position: absolute;
+        z-index: 1000;
     }
 }

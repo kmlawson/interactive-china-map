@@ -45,34 +45,35 @@ document.addEventListener('DOMContentLoaded', () => {
                 province = province.querySelector('path'); // For grouped provinces, use the first path
             }
 
+            province.addEventListener('click', (e) => toggleLabel(e, name, provinceNameDisplay));
+            
             if (!isMobile) {
                 province.addEventListener('mousemove', (e) => showLabel(e, name, provinceNameDisplay));
                 province.addEventListener('mouseout', () => hideLabel(provinceNameDisplay));
-            } else {
-                province.addEventListener('click', (e) => toggleLabel(e, name, provinceNameDisplay));
             }
         });
 
         cities.forEach(city => {
             const name = city.id;
             
+            city.addEventListener('click', (e) => toggleLabel(e, name, cityNameDisplay));
+            
             if (!isMobile) {
                 city.addEventListener('mousemove', (e) => showLabel(e, name, cityNameDisplay));
                 city.addEventListener('mouseout', () => hideLabel(cityNameDisplay));
-            } else {
-                city.addEventListener('click', (e) => toggleLabel(e, name, cityNameDisplay));
             }
         });
 
-        if (isMobile) {
-            enablePanZoom();
-        }
+        enablePanZoom();
 
         // Add event listener for the checkbox
         showCitiesCheckbox.addEventListener('change', toggleCityVisibility);
 
         // Initial city visibility
         toggleCityVisibility();
+
+        // Set initial scroll position to top right
+        setInitialScrollPosition();
     }
 
     function showLabel(e, name, labelElement) {
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function toggleLabel(e, name, labelElement) {
-        if (labelElement.style.display === 'none') {
+        if (labelElement.style.display === 'none' || labelElement.textContent !== name) {
             showLabel(e, name, labelElement);
         } else {
             hideLabel(labelElement);
@@ -94,9 +95,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function positionLabel(e, labelElement) {
-        const offset = 15;
-        labelElement.style.left = `${e.clientX + offset}px`;
-        labelElement.style.top = `${e.clientY - offset}px`;
+        const mapContainer = document.getElementById('map-container');
+        const rect = mapContainer.getBoundingClientRect();
+        const offsetX = e.clientX + rect.left - 30;
+        const offsetY = e.clientY - rect.top;
+        
+        labelElement.style.left = `${offsetX}px`;
+        labelElement.style.top = `${offsetY}px`;
     }
 
     function toggleCityVisibility() {
@@ -150,5 +155,14 @@ document.addEventListener('DOMContentLoaded', () => {
             scale = Math.min(Math.max(0.5, scale), 4);
             svg.style.transform = `scale(${scale})`;
         }
+    }
+
+    function setInitialScrollPosition() {
+        const mapContainer = document.getElementById('map-container');
+        const svg = mapContainer.querySelector('svg');
+        
+        // Set the scroll position to the top right
+        mapContainer.scrollLeft = svg.clientWidth - mapContainer.clientWidth;
+        mapContainer.scrollTop = 0;
     }
 });
