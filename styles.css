@@ -1,13 +1,15 @@
 body {
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     height: 100vh;
     background-color: #f0f0f0;
     font-family: Arial, sans-serif;
+}
+
+#map-wrapper {
+    position: relative;
+    height: 100vh;
+    overflow: hidden;
 }
 
 #controls {
@@ -21,29 +23,58 @@ body {
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
 
+#comments-section {
+    padding: 20px 50px;
+    background-color: white;
+    border-top: 1px solid #ccc;
+}
+
+#attribution {
+    padding: 10px 50px;
+    background-color: #e0e0e0;
+    color: #666;
+    text-align: center;
+    font-size: 0.9em;
+    border-top: 1px solid #ccc;
+}
+
+
 #map-container {
+    margin-left: 30px;
     max-width: 100%;
-    max-height: calc(100% - 40px);
+    max-height: 100%;
     overflow: auto;
 }
 
-.province {
+.province path {
     fill: #99CC99;
     stroke: #ffffff;
     stroke-width: 1px;
     transition: fill 0.3s;
 }
 
-.province:hover {
-    /* fill: #66AA66; */
+.province path:hover {
+    fill: #ffffd1; /* Pale pastel yellow */
 }
 
+
 .province-label {
-    font-size: 12px;
+    font-size: 20px;
     pointer-events: none;
 }
 
-#province-name, #city-name {
+#province-name {
+    position: fixed;
+    padding: 5px;
+    border: 1px solid black;
+    font-size: 15px;
+    font-weight: bold;
+    pointer-events: none;
+    display: none; /* Hide by default */
+    z-index: 1000;
+}
+
+#city-name {
     position: fixed;
     padding: 5px;
     border: 1px solid black;
@@ -61,9 +92,6 @@ body {
     background: #FFFF99;
 }
 
-#Yellow\ River, #Yangzi\ River {
-    display: none; /* Hidden by default */
-}
 
 .city circle {
     fill: #3a6647;
@@ -79,10 +107,11 @@ body {
 @media (max-width: 768px) {
     #map-container {
         overflow: scroll;
+        margin-left: 0px;
         -webkit-overflow-scrolling: touch;
     }
 
-    .province:hover {
+    .province path:hover {
         fill: #99CC99; /* Reset hover color on mobile */
     }
 

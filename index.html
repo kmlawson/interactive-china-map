@@ -3,25 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interactive China Provinces Map</title>
+    <title>China Map</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="controls">
-        <label>
-            <input type="checkbox" id="show-cities" checked>
-            Show cities
-        </label>
-        <label>
-            <input type="checkbox" id="show-yellow-river"> Show Yellow River
-          </label>
-          <label>
-            <input type="checkbox" id="show-yangzi-river"> Show Yangzi River
-          </label>
+        <div id="controls">
+            <label><input type="checkbox" id="show-cities" checked> Show Cities</label>
+            <label><input type="checkbox" id="show-yellow-river" checked> Show Yellow River</label>
+            <label><input type="checkbox" id="show-yangzi-river" checked> Show Yangzi River</label>
+            <input type="checkbox" id="show-chinese-names"> Show Chinese Names
+        </div>
+
+        <div id="map-container"></div>
+
+        <div id="province-name"></div>
+        <div id="city-name"></div>
+    <div id="comments-section">
+        <h2>China Map Review</h2>
+        <p>This interactive map allows you to practice the names of China's modern day provinces, 
+            provincial capitals, and a few other cities that are important for modern Chinese history. 
+            Keep in mind that China's provinces, autonomous regions, and directly administered cities 
+            have undergone a number of important changes so please consult other maps for earlier 
+            periods, especially before the 1960s.</p>
+        <p>Mouse over or tap on provinces and cities to show their name and check your memory. You may toggle the visibility 
+            of the Yellow River in the north and the Yangzi River in the south.
+        </p>
     </div>
-    <div id="map-container"></div>
-    <div id="province-name"></div>
-    <div id="city-name"></div>
+
+    <footer id="attribution">
+        <p>This was created with Anthropic Claude Sonnet 3.5 with Konrad Lawson at the prompt. 
+            The Wikipedia source for the basemap is <a href="https://en.wikipedia.org/wiki/File:China_blank_province_map.svg">here.</a> I added cities myself. Wikipedia Commons supplied the <a href="https://commons.wikimedia.org/wiki/File:Yellow_river.svg">Yellow</a> and <a href="https://commons.wikimedia.org/wiki/File:Yangtze_River_Route.svg">Yangzi</a> river SVGs.</a></p>
+    </footer>
     <script src="map.js"></script>
 </body>
 </html>
