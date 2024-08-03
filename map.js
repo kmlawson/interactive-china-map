@@ -7,6 +7,42 @@ document.addEventListener('DOMContentLoaded', () => {
     const showYangziRiverCheckbox = document.getElementById('show-yangzi-river');
     const showChineseNamesCheckbox = document.getElementById('show-chinese-names');
     
+    const aboutButton = document.createElement('button');
+    aboutButton.textContent = 'About';
+    aboutButton.addEventListener('click', showAboutBox);
+    document.getElementById('controls').appendChild(aboutButton);
+
+    const aboutBox = document.createElement('div');
+    aboutBox.id = 'about-box';
+    aboutBox.style.display = 'none';
+
+    const closeButton = document.createElement('span');
+    closeButton.id = 'close-about';
+    closeButton.innerHTML = '&times;';
+    closeButton.addEventListener('click', hideAboutBox);
+    aboutBox.appendChild(closeButton);
+
+    document.body.appendChild(aboutBox);
+
+    const commentsSection = document.getElementById('comments-section');
+    const attribution = document.getElementById('attribution');
+    aboutBox.appendChild(commentsSection);
+    aboutBox.appendChild(attribution);
+
+    document.addEventListener('click', (event) => {
+        if (!aboutBox.contains(event.target) && event.target !== aboutButton) {
+            hideAboutBox();
+        }
+    });
+
+    function showAboutBox() {
+        document.getElementById('about-box').style.display = 'block';
+    }
+    
+    function hideAboutBox() {
+        document.getElementById('about-box').style.display = 'none';
+    }
+
     const provinceNames = {
         HJ: "Heilongjiang", JL: "Jilin", LN: "Liaoning", NM: "Inner Mongolia",
         BJ: "Beijing", TJ: "Tianjin", HE: "Hebei", SX: "Shanxi", SD: "Shandong",
@@ -115,10 +151,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 province = province.querySelector('path');
             }
 
+             // Set initial color for Taiwan
+             if (id === 'TW' || id.startsWith('TW_')) {
+                province.style.fill = '#CCCCCC'; // Grey color for Taiwan
+            }
+
             if (isMobile) {
                 province.addEventListener('click', (e) => {
                     if (lastClickedProvince) {
-                        lastClickedProvince.style.fill = '#99CC99'; // Reset previous province color
+                        // Reset the color of the previously clicked province
+                        if (lastClickedProvince.id.substring(1) === 'TW' || lastClickedProvince.id.substring(1).startsWith('TW_')) {
+                            lastClickedProvince.style.fill = '#CCCCCC'; // Reset Taiwan to grey
+                        } else {
+                            lastClickedProvince.style.fill = '#99CC99'; // Reset other provinces to default green
+                        }
                     }
                     province.style.fill = '#ffffd1'; // Set clicked province to pale pastel yellow
                     lastClickedProvince = province;
