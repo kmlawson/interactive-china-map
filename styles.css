@@ -7,14 +7,14 @@ body {
 }
 
 a {
-    color: #99CC99; /* Jade green - more vibrant than the previous dark green */
+    color: #79b079; 
     text-decoration: none;
     transition: color 0.3s ease;
-    font-weight: bold; /* Make links bold to stand out more */
+    font-weight: bold; 
 }
 
 a:hover {
-    color: #9eef9e; /* Brighter green on hover */
+    color: #79b079; 
     text-decoration: underline;
 }
 
@@ -175,11 +175,11 @@ a:hover {
     }
 
     a, a:hover {
-        color: #99CC99;;
+        color: #79b079;;
     }
     
     a:active {
-        color: #99CC99;;
+        color: #79b079;;
     }
 
 
