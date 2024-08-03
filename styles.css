@@ -6,6 +6,19 @@ body {
     font-family: Arial, sans-serif;
 }
 
+a {
+    color: #99CC99; /* Jade green - more vibrant than the previous dark green */
+    text-decoration: none;
+    transition: color 0.3s ease;
+    font-weight: bold; /* Make links bold to stand out more */
+}
+
+a:hover {
+    color: #9eef9e; /* Brighter green on hover */
+    text-decoration: underline;
+}
+
+
 #map-wrapper {
     position: relative;
     height: 100vh;
@@ -106,6 +119,7 @@ body {
 
 #controls button {
     background-color: #99CC99;
+    color: black; /* Ensure text color is explicitly set */
     border: none;
     padding: 5px 10px;
     border-radius: 5px;
@@ -124,7 +138,7 @@ body {
     left: 50%;
     transform: translate(-50%, -50%);
     background-color: white;
-    padding: 10px;
+    padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 10px rgba(0,0,0,0.3);
     max-width: 80%;
@@ -143,6 +157,39 @@ body {
 
 
 @media (max-width: 768px) {
+    
+    /* Make sure the about box fills screen on mobile */
+    #about-box {
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        transform: none;
+        max-width: 100%;
+        max-height: 100%;
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    a, a:hover {
+        color: #99CC99;;
+    }
+    
+    a:active {
+        color: #99CC99;;
+    }
+
+
+    #close-about {
+        top: 20px;
+        right: 20px;
+        font-size: 30px;
+    }
+
+
     #map-container {
         overflow: scroll;
         margin-left: 0px;
@@ -151,6 +198,10 @@ body {
 
     .province path:hover {
         fill: #99CC99; /* Reset hover color on mobile */
+    }
+
+    #controls button {
+        color: black; /* Explicitly set text color for mobile */
     }
 
     #province-name, #city-name {
